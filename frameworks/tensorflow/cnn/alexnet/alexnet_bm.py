@@ -2,6 +2,8 @@ from datetime import datetime
 
 import time
 from datapreprocess import cifar10_input
+from globalconfig import Framework, NetworkType, CNN
+from benchmark import save_a_result, TestResultEntry
 
 import tensorflow as tf
 import numpy as np
@@ -21,10 +23,12 @@ affine_counter = 1
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_integer('epoch_size', 60000, """Epoch size.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('log_step', 50, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_integer('device_id', 0, """Device id.""")
+tf.app.flags.DEFINE_integer('learning_rate', 0.05, """Learning rate.""")
 tf.app.flags.DEFINE_string('data_dir', globalconfig.CIFAR10_DATA_DIR, """Data directory""")
 tf.app.flags.DEFINE_string('train_dir', './trained_models/',
                            """Path to the data directory.""")
@@ -34,6 +38,7 @@ tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
 tf.app.flags.DEFINE_boolean('use_dataset', False, """True to use datasets""")
 tf.app.flags.DEFINE_boolean('data_format', 'NCHW', """NCHW for GPU and NHWC for CPU.""")
+tf.app.flags.DEFINE_boolean('test_summary_file', None, 'File to record benchmark result.')
 
 data_format = 'NCHW'
 data_format_c = 'channels_first'
@@ -252,6 +257,10 @@ def train():
         average_batch_time /= iterations
         print 'average_batch_time: ', average_batch_time
         print ('epoch_info: %s' % ','.join(epochs_info))
+        if os.path.isfile(FLAGS.test_summary_file):
+            save_a_result(TestResultEntry(Framework.tensorflow, NetworkType.cnn, CNN.alexnet, FLAGS.device_id,
+                                          1, FLAGS.batch_size, FLAGS.epochs, FLAGS.epoch_size, FLAGS.learning_rate,
+                                          average_batch_time), FLAGS.test_summary_file)
 
 
 def main(_):
