@@ -39,7 +39,7 @@ class GPUMode(object):
 
 class EccMode(GPUMode):
     def __init__(self, device_id):
-        super().__init__(device_id)
+        super(EccMode, self).__init__(device_id)
 
     @property
     def status(self):
@@ -59,7 +59,7 @@ class EccMode(GPUMode):
 
 class PersistenceMode(GPUMode):
     def __init__(self, device_id):
-        super().__init__(device_id)
+        super(PersistenceMode, self).__init__(device_id)
 
     @property
     def status(self):
@@ -77,7 +77,7 @@ class PersistenceMode(GPUMode):
 
 class AccountingMode(GPUMode):
     def __init__(self, device_id):
-        super().__init__(device_id)
+        super(AccountingMode, self).__init__(device_id)
 
     @property
     def status(self):
@@ -95,7 +95,7 @@ class AccountingMode(GPUMode):
 
 class AutoBoostMode(GPUMode):
     def __init__(self, device_id):
-        super().__init__(device_id)
+        super(AutoBoostMode, self).__init__(device_id)
 
     @property
     def status(self):

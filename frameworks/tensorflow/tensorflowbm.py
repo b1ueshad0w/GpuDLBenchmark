@@ -11,6 +11,7 @@ import os
 import time
 from globalconfig import FCN
 from nvidiasmi import GPUAccounting
+from benchmark import TestConfigEntry, Framework, NetworkType, Status
 
 import logging
 logger = logging.getLogger(__name__ if __name__ != '__main__' else os.path.splitext(os.path.basename(__file__))[0])
@@ -42,8 +43,8 @@ def run(log_dir, log_file, devId, gpuCount, lr, netType,
         'batch_size': batchSize,
         'epochs': numEpochs,
         'epoch_size': epochSize,
-        'test_summary_file': test_summary_file,
         'learning_rate': lr,
+        'training_summary_file': os.path.join(log_dir, 'training_summary.log')
     }
     script = '%s_bm.py' % network
     if int(gpuCount) > 1:
@@ -57,6 +58,7 @@ def run(log_dir, log_file, devId, gpuCount, lr, netType,
     script_path = os.path.join(tool_dir, script)
     if not os.path.isfile(script_path):
         logger.error('Script file not found: %s' % script_path)
+
     envs_str = ' '.join(['%s=%s' % (k, v) for k, v in envs.items()])
     args_str = ' '.join(['--%s=%s' % (k, v) for k, v in args.items()])
     cmd = '%s python %s %s &> %s' % (envs_str, script_path, args_str, log_file)
@@ -69,12 +71,16 @@ def run(log_dir, log_file, devId, gpuCount, lr, netType,
     with GPUAccounting(gpu_usage_csv):
         if os.system(cmd) != 0:
             logger.error('Executing shell failed: %s.' % cmd)
-        else:
-            logger.debug('Executing shell success: %s' % cmd)
+            return
+        logger.debug('Executing shell success: %s' % cmd)
     time_elapsed = time.time() - start_time
     with open(log_file, "a") as logFile:
         logFile.write("Total time: " + str(time_elapsed) + "\n")
         logFile.write("cmd: " + cmd + "\n")
+    # if test_summary_file:
+    #     with open(test_summary_file, 'a') as f:
+    #         config = TestConfigEntry(Framework.tensorflow, NetworkType.fc, FCN.fcn5, 0, 1, 4096, 2, 60000, 0.05, Status.enabled)
+    #         abc = ','.join([str(i) for i in config])
 
 
 def set_launch_args():

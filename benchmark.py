@@ -21,6 +21,8 @@ logger.setLevel(logging.DEBUG)
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 HOST_NAME = subprocess.check_output("hostname", shell=True).strip().split('\n')[0]
+TRAINING_SUMMARY_TEMPLATE = 'Average Batch Time: {batchTime}'
+EVALUATION_SUMMARY_TEMPLATE = 'Accuracy: {accuracy}'
 
 FIELDS = [
     'framework',
@@ -126,16 +128,26 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 continue
             log_file_name = generate_log_file(config)
             log_file_path = os.path.join(log_dir, log_file_name)
-            case_log_dir = os.path.join(log_dir, config.framework, config.network_type, config.network_name)
-            if not os.path.isdir(case_log_dir):
-                os.makedirs(case_log_dir)
+            network_dir = os.path.join(log_dir, config.framework, config.network_type, config.network_name)
+            config_dir_name = '--'.join([devId,
+                                         config.device_count,
+                                         config.batch_size,
+                                         config.number_of_epochs,
+                                         config.epoch_size,
+                                         config.learning_rate]).replace(' ', '_')
+            # configs may be the same, so we add a timestamp to distinguish them.
+            config_dir = os.path.join(network_dir,
+                                      config_dir_name,
+                                      datetime.datetime.now().strftime('%y%m%d-%H%M%S'))
+            if not os.path.isdir(config_dir):
+                os.makedirs(config_dir)
             args = {
                 'netType': config.network_type,
                 'log': log_file_path,
                 'batchSize': config.batch_size,
                 'network': config.network_name,
                 'lr': config.learning_rate,
-                'log_dir': case_log_dir,
+                'log_dir': config_dir,
                 'gpuCount': gpu_count,
                 'devId': devId,
                 'test_summary_file': test_summary_file
@@ -149,4 +161,4 @@ def run(config_file, log_dir=None, test_summary_file=None):
 if __name__ == '__main__':
     _config_file = '/tmp/config.csv'
     # generate_configs(_config_file)
-    run(_config_file)
+    # run(_config_file)

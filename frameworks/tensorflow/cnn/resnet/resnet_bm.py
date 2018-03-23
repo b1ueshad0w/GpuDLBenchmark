@@ -21,6 +21,7 @@ FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 128, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_integer('learning_rate', 0.01, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_integer('device_id', 0, """Device id.""")
@@ -74,10 +75,9 @@ def train():
         # Add a simple objective so we can calculate the backward pass.
         loss_value = loss(logits, labels)
         # Compute the gradient with respect to all the parameters.
-        lr = 0.01
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
-            grad = tf.train.MomentumOptimizer(lr, 0.9).minimize(loss_value)
+            grad = tf.train.MomentumOptimizer(FLAGS.learning_rate, 0.9).minimize(loss_value)
 
         # Create a saver.
         saver = tf.train.Saver(tf.global_variables())
