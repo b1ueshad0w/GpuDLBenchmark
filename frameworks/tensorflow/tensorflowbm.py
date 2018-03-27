@@ -128,7 +128,7 @@ def save_benchmark_result(benchmark_training_speed, benchmark_accuracy):
     pass
 
 
-def evaluation_cnn(tool_path, log_dir, train_dir, train_log_path):
+def evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path):
     eval_script = os.path.join(tool_path, 'eval.sh')
     if not os.path.isfile(eval_script):
         logger.warning('Script for evaluation not found: %s' % eval_script)
@@ -142,6 +142,7 @@ def evaluation_cnn(tool_path, log_dir, train_dir, train_log_path):
         'train_log': train_log_path,
         'eval_log': eval_log_path,
         'eval_dir': eval_dir,
+        'script_path': os.path.join(tool_path, '%s_eval.py' % network_name)
     }
     eval_envs_str = ' '.join(['%s=%s' % (k, v) for k, v in eval_envs.items()])
     eval_cmd = '%s bash %s &> %s' % (eval_envs_str, eval_script, eval_log_path)
@@ -185,10 +186,10 @@ def evaluation_rnn(train_log_path):
         return result.group(1)
 
 
-def evaluation(tool_path, log_dir, train_dir, train_log_path):
+def evaluation(network_name, tool_path, log_dir, train_dir, train_log_path):
     network_name = os.path.basename(tool_path)
     if network_name == CNN.resnet or network_name == CNN.alexnet:
-        return evaluation_cnn(tool_path, log_dir, train_dir, train_log_path)
+        return evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path)
     elif network_name == FCN.fcn5:
         return evaluation_fcn5(train_log_path)
     elif network_name == RNN.lstm:
@@ -278,7 +279,7 @@ def run_sh(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_cou
 
     # Evaluation
     if not synthetic:
-        benchmark_accuracy = evaluation(tool_path, log_dir, train_dir, log_path)
+        benchmark_accuracy = evaluation(network, tool_path, log_dir, train_dir, log_path)
 
     # Save log file
     with open(log_path, "a") as logFile:

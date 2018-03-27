@@ -120,13 +120,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--epochs", help="the number of epochs", type=int, default=4)
     parser.add_argument("-b", "--minibatch", help="minibatch size", type=int, default=16)
-    parser.add_argument("-i", "--iterations", help="iterations", type=int, default=2)
+    parser.add_argument("-s", "--epoch_size", help="epoch size(dataset size)", type=int, default=50000)
+    # parser.add_argument("-i", "--iterations", help="iterations", type=int, default=2)
     parser.add_argument("-d", "--deviceid", help="specified device id", type=int, default=0)
     args = parser.parse_args()
 
     epochs = args.epochs
     minibatch = args.minibatch
-    iterations = args.iterations
+    # iterations = args.iterations
+    iterations = int(args.epochs * args.epoch_size / args.minibatch)
     device_id = args.deviceid
     set_parameters(epochs, minibatch, iterations, device_id)
+
     tf.app.run()
