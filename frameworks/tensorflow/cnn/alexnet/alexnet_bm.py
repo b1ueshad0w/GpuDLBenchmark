@@ -36,7 +36,6 @@ tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
 tf.app.flags.DEFINE_boolean('use_dataset', False, """True to use datasets""")
 tf.app.flags.DEFINE_boolean('data_format', 'NCHW', """NCHW for GPU and NHWC for CPU.""")
-tf.app.flags.DEFINE_boolean('training_summary_file', None, 'File to record benchmark result.')
 
 data_format = 'NCHW'
 data_format_c = 'channels_first'
@@ -255,9 +254,6 @@ def train():
         summary = 'average_batch_time: ', average_batch_time
         print summary
         print ('epoch_info: %s' % ','.join(epochs_info))
-        if FLAGS.training_summary_file:
-            with open(FLAGS.training_summary_file) as output_file:
-                output_file.write(TRAINING_SUMMARY_TEMPLATE.format(batchTime=average_batch_time))
 
 
 def main(_):

@@ -13,7 +13,7 @@ import time
 import shutil
 import subprocess
 import datetime
-from globalconfig import Framework, NetworkType, FCN, Status
+from globalconfig import Framework, NetworkType, FCN, Status, Synthetic
 from nvidiasmi import GPUManager, ModeStatus
 import logging
 logger = logging.getLogger(__name__ if __name__ != '__main__' else os.path.splitext(os.path.basename(__file__))[0])
@@ -34,6 +34,7 @@ FIELDS = [
     'number_of_epochs',
     'epoch_size',
     'learning_rate',
+    'synthetic',
     'enabled'
 ]
 
@@ -47,8 +48,9 @@ TestResultFields = [
     'number_of_epochs',
     'epoch_size',
     'learning_rate',
+    'synthetic',
     'training_speed',
-    # 'accuracy',
+    'accuracy',
 ]
 
 TestConfigEntry = namedtuple('TestConfigEntry', FIELDS)
@@ -56,7 +58,8 @@ TestResultEntry = namedtuple('TestResultEntry', TestResultFields)
 
 
 def generate_configs(config_file):
-    config = TestConfigEntry(Framework.tensorflow, NetworkType.fc, FCN.fcn5, 0, 1, 4096, 2, 60000, 0.05, Status.enabled)
+    config = TestConfigEntry(Framework.tensorflow, NetworkType.fc, FCN.fcn5,
+                             0, 1, 4096, 2, 60000, 0.05, Synthetic.true, Status.enabled)
     with open(config_file, 'wb') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(FIELDS)
@@ -129,12 +132,13 @@ def run(config_file, log_dir=None, test_summary_file=None):
             log_file_name = generate_log_file(config)
             log_file_path = os.path.join(log_dir, log_file_name)
             network_dir = os.path.join(log_dir, config.framework, config.network_type, config.network_name)
-            config_dir_name = '--'.join([devId,
-                                         config.device_count,
-                                         config.batch_size,
-                                         config.number_of_epochs,
-                                         config.epoch_size,
-                                         config.learning_rate]).replace(' ', '_')
+            config_dir_name = '--'.join([str(devId),
+                                         str(config.device_count),
+                                         str(config.batch_size),
+                                         str(config.number_of_epochs),
+                                         str(config.epoch_size),
+                                         str(config.learning_rate),
+                                         str(config.synthetic)]).replace(' ', '_')
             # configs may be the same, so we add a timestamp to distinguish them.
             config_dir = os.path.join(network_dir,
                                       config_dir_name,
@@ -150,7 +154,8 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 'log_dir': config_dir,
                 'gpuCount': gpu_count,
                 'devId': devId,
-                'test_summary_file': test_summary_file
+                'synthetic': config.synthetic,
+                'test_summary_file': test_summary_file,
             }
             args_str = ' '.join(['-%s %s' % (k, v) for k, v in args.items()])
             cmd = 'python {scriptFile} {argsStr}'.format(scriptFile=sub_benchmark, argsStr=args_str)

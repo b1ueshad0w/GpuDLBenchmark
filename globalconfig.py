@@ -27,7 +27,12 @@ class NetworkType(object):
     rnn = 'rnn'
 
 
+class Synthetic(object):
+    true = True
+    false = False
+
+
 class Status(object):
-    enabled = '1'
-    disabled = '0'
+    enabled = True
+    disabled = False
 

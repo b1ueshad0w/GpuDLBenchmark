@@ -1,5 +1,5 @@
 import tensorflow as tf
-from frameworks.tensorflow.fc import models
+from frameworks.tensorflow.fc.fcn5 import models
 import time
 import os
 import numpy as np
@@ -7,9 +7,11 @@ from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
 from globalconfig import MNIST_DATA_DIR
 
+EPOCH_SIZE = 60000
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_integer('epoch_size', EPOCH_SIZE, """Dataset size.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('log_step', 10, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
@@ -22,8 +24,6 @@ tf.app.flags.DEFINE_boolean('log_device_placement', False, """Whether to log dev
 tf.app.flags.DEFINE_boolean('use_dataset', False, """Whether to use datasets vs. feed_dict.""")
 tf.app.flags.DEFINE_integer('num_gpus', 1, """How many GPUs to use.""")
 tf.app.flags.DEFINE_boolean('xla', False, """True to use XLA, which has to be compiled in.""")
-
-EPOCH_SIZE = 60000
 
 
 def createFakeData(count, featureDim, labelDim):
@@ -115,7 +115,7 @@ def train(model='fcn5'):
         sess.run(init)
         if FLAGS.use_dataset:
             sess.run(iterator.initializer)
-        batch_size_per_epoch = int((EPOCH_SIZE + FLAGS.batch_size - 1) / FLAGS.batch_size)
+        batch_size_per_epoch = int((FLAGS.epoch_size + FLAGS.batch_size - 1) / FLAGS.batch_size)
         iterations = FLAGS.epochs * batch_size_per_epoch
         average_batch_time = 0.0
         epochs_info = []
