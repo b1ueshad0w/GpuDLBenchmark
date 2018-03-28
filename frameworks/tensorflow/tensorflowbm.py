@@ -310,24 +310,21 @@ def set_launch_args():
     parser.add_argument('-lr', type=str, help='learning rate')
     parser.add_argument('-netType', type=str, help='network type')
     parser.add_argument('-test_summary_file', type=str, help='File to record benchmark result.')
-    parser.add_argument('-synthetic', type=bool, default=False, help='whether to use the synthetic data')
+    parser.add_argument('-synthetic', type=str, default=Synthetic.false, help='whether to use the synthetic data')
     args = parser.parse_args()
     # print(args)
     run(log_dir=args.log_dir,
-        log_file=args.log,
-        devId=args.devId,
-        gpuCount=args.gpuCount,
-        lr=args.lr,
-        netType=args.netType,
-        batchSize=args.batchSize,
+        dev_id=args.devId,
+        net_type=args.netType,
         network=args.network,
-        numEpochs=args.numEpochs,
-        epochSize=args.epochSize,
-        numThreads=args.numThreads,
-        cpuCount=args.cpuCount,
-        hostFile=args.hostFile,
-        test_summary_file=args.test_summary_file,
+        gpu_count=args.gpuCount,
+        learning_rate=args.lr,
+        cpu_count=args.cpuCount,
+        batch_size=args.batchSize,
+        num_epochs=args.numEpochs,
+        epoch_size=args.epochSize,
         synthetic=args.synthetic,
+        test_result_file=args.test_summary_file,
         )
 
 
