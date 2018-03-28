@@ -103,7 +103,7 @@ class AutoBoostMode(GPUMode):
 
     @property
     def status(self):
-        cmd = '%s -i 0 -q -d CLOCK'
+        cmd = '%s -i 0 -q -d CLOCK' % TOOL
         output = subprocess.check_output(cmd, shell=True)
         return 'On' in output.splitlines()[-3]
 
