@@ -64,6 +64,7 @@ def generate_configs(config_file):
         writer = csv.writer(csv_file)
         writer.writerow(FIELDS)
         writer.writerow(config)
+        writer.writerow(TestConfigEntry('tensorflow', 'cnn', 'alexnet', 0, 1, 1024, 2, 50000, 0.01, False, True))
 
 
 def generate_log_file(config):
@@ -163,7 +164,18 @@ def run(config_file, log_dir=None, test_summary_file=None):
             subprocess.check_call(cmd, shell=True)
 
 
+def set_arguments():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config_file", help="file path of config file", type=str)
+    parser.add_argument("-l", "--log_dir", help="Directory for logs.", type=str, default=None)
+    parser.add_argument("-t", "--test_summary_file", help="test_summary_file", type=int, default=None)
+    args = parser.parse_args()
+    run(args.config_file, log_dir=args.log_dir, test_summary_file=args.test_summary_file)
+
+
 if __name__ == '__main__':
-    _config_file = '/tmp/config.csv'
+    set_arguments()
+    # _config_file = '/tmp/config.csv'
     # generate_configs(_config_file)
     # run(_config_file)
