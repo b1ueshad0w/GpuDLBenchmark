@@ -47,11 +47,15 @@ class EccMode(GPUMode):
         return 'Enabled' in subprocess.check_output(cmd, shell=True)
 
     def turn_on(self):
+        if self.status is ModeStatus.On:
+            return True
         cmd = '%s -e 1' % (self._cmd_prefix,)
         subprocess.check_call(cmd, shell=True)
         raise RuntimeError('Reboot is required for ECC mode changes.')
 
     def turn_off(self):
+        if self.status is ModeStatus.Off:
+            return True
         cmd = '%s -e 0' % (self._cmd_prefix,)
         subprocess.check_call(cmd, shell=True)
         raise RuntimeError('Reboot is required for ECC mode changes.')
