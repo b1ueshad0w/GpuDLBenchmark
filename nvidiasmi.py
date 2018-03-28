@@ -143,7 +143,7 @@ class GPUManager(object):
 
     @classmethod
     def list_gpus(cls):
-        cmd = 'TOOL -q'
+        cmd = '%s -q' % (TOOL,)
         output = subprocess.check_output(cmd, shell=True)
         pattern = 'Attached GPUs\s*:\s*(\d+)'
         result = re.search(pattern, output)
