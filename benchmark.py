@@ -123,8 +123,8 @@ def run(config_file, log_dir=None, test_summary_file=None):
         for config in configs:
             if config.enabled != Status.enabled:
                 continue
-            os.environ['training_speed'] = 0
-            logger.info('Running test with config: %s' % config)
+            os.environ['training_speed'] = str(0)
+            logger.info('Running test with config: %s' % str(config))
             sub_benchmark_file_name = config.framework + 'bm.py'
             sub_benchmark = os.path.join(PROJECT_ROOT, 'frameworks', config.framework, sub_benchmark_file_name)
             if not os.path.exists(sub_benchmark):
@@ -175,6 +175,7 @@ def set_arguments():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     set_arguments()
     # _config_file = '/tmp/config.csv'
     # generate_configs(_config_file)

@@ -249,7 +249,7 @@ def run_sh(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_cou
         envs['gpu_count'] = gpu_count
         envs['script_path'] = os.path.join(tool_path, '%s_multigpu_bm.py' % network)
         script_name = 'tm.sh'
-    if synthetic:
+    if synthetic == Synthetic.true:
         script_name = os.path.join('synthetic',  't.sh')
         envs['script_path'] = os.path.join(tool_path, 'synthetic', '%s_synthetic.py' % network)
     script_path = os.path.join(tool_path, script_name)
