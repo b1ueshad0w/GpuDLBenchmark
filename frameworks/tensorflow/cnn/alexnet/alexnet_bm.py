@@ -250,7 +250,7 @@ def train():
             coord.request_stop()
             coord.join(threads)
         average_batch_time /= iterations
-        summary = 'average_batch_time: ', average_batch_time
+        summary = 'average_batch_time: ' + average_batch_time
         print summary
         print ('epoch_info: %s' % ','.join(epochs_info))
 
