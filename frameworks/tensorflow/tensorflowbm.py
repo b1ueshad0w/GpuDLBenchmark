@@ -125,7 +125,7 @@ def save_benchmark_result(benchmark_training_speed, benchmark_accuracy):
     pass
 
 
-def evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path):
+def evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, train_log_path):
     eval_script = os.path.join(tool_path, 'eval.sh')
     if not os.path.isfile(eval_script):
         logger.warning('Script for evaluation not found: %s' % eval_script)
@@ -135,14 +135,16 @@ def evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path):
     if os.path.isdir(eval_dir):
         shutil.rmtree(eval_dir)
     eval_envs = {
+        'batch_size': batch_size,
         'checkpoint_dir': train_dir,
         'train_log': train_log_path,
         'eval_log': eval_log_path,
         'eval_dir': eval_dir,
-        'script_path': os.path.join(tool_path, '%s_eval.py' % network_name)
+        'script_path': os.path.join(tool_path, '%s_eval.py' % network_name),
+        'logFile': eval_log_path,
     }
     eval_envs_str = ' '.join(['%s=%s' % (k, v) for k, v in eval_envs.items()])
-    eval_cmd = '%s bash %s &> %s' % (eval_envs_str, eval_script, eval_log_path)
+    eval_cmd = '%s bash %s' % (eval_envs_str, eval_script)
     logger.debug('Begin evaluation.')
     logger.debug('Executing shell: %s' % eval_cmd)
     if os.system(eval_cmd) != 0:
@@ -183,9 +185,9 @@ def evaluation_rnn(train_log_path):
         return result.group(1)
 
 
-def evaluation(network_name, tool_path, log_dir, train_dir, train_log_path):
+def evaluation(batch_size, network_name, tool_path, log_dir, train_dir, train_log_path):
     if network_name == CNN.resnet or network_name == CNN.alexnet:
-        return evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path)
+        return evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, train_log_path)
     elif network_name == FCN.fcn5:
         return evaluation_fcn5(train_log_path)
     elif network_name == RNN.lstm:
@@ -239,6 +241,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         'epoch_size': epoch_size,
         'train_dir': train_dir,
         'learning_rate': learning_rate,
+        'logFile': log_path,
     }
     script_name = 't.sh'
     envs['script_path'] = os.path.join(tool_path, '%s_bm.py' % network)
@@ -256,7 +259,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         return
 
     envs_str = ' '.join(['%s=%s' % (k, v) for k, v in envs.items()])
-    cmd = '%s bash %s &> %s' % (envs_str, script_path, log_path)
+    cmd = '%s bash %s' % (envs_str, script_path)
 
     start_time = time.time()
     logger.debug('Executing shell: %s' % cmd)
@@ -271,11 +274,11 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     # Parse log file and extract benchmark info
     # average_batch_time
     benchmark_training_speed = extract_info_tensorflow_synthetic(log_path) \
-        if synthetic else extract_info_tensorflow(log_path)
+        if synthetic == Synthetic.true else extract_info_tensorflow(log_path)
 
     # Evaluation
-    if not synthetic:
-        benchmark_accuracy = evaluation(network, tool_path, log_dir, train_dir, log_path)
+    if synthetic == Synthetic.false:
+        benchmark_accuracy = evaluation(batch_size, network, tool_path, log_dir, train_dir, log_path)
 
     # Save log file
     with open(log_path, "a") as logFile:
@@ -286,7 +289,8 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
 
     if test_result_file and os.path.isfile(test_result_file):
         with open(test_result_file, 'a') as f:
-            f.write('\n%s' % test_result)
+            test_result_str = ','.join([str(e) for e in test_result])
+            f.write('%s\n' % test_result_str)
 
     shutil.rmtree(train_dir)
 

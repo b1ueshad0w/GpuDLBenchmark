@@ -42,7 +42,7 @@ import numpy as np
 import tensorflow as tf
 
 # from tensorflow.models.image.cifar10 import cifar10
-from alexnet_cifar10 import inference
+from frameworks.tensorflow.cnn.alexnet.alexnet_bm import inference
 from datapreprocess import cifar10_input
 
 FLAGS = tf.app.flags.FLAGS
@@ -57,6 +57,8 @@ tf.app.flags.DEFINE_integer('eval_interval_secs', 60 * 5,
                             """How often to run the eval.""")
 tf.app.flags.DEFINE_integer('num_examples', 10000,
                             """Number of examples to run.""")
+tf.app.flags.DEFINE_integer('batch_size', 1024,
+                            """batch size. Default to 1024""")
 tf.app.flags.DEFINE_boolean('run_once', True,
                             """Whether to run eval only once.""")
 
