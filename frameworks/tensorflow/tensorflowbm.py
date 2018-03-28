@@ -187,7 +187,6 @@ def evaluation_rnn(train_log_path):
 
 
 def evaluation(network_name, tool_path, log_dir, train_dir, train_log_path):
-    network_name = os.path.basename(tool_path)
     if network_name == CNN.resnet or network_name == CNN.alexnet:
         return evaluation_cnn(network_name, tool_path, log_dir, train_dir, train_log_path)
     elif network_name == FCN.fcn5:
