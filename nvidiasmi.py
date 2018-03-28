@@ -48,12 +48,12 @@ class EccMode(GPUMode):
 
     def turn_on(self):
         cmd = '%s -e 1' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
         raise RuntimeError('Reboot is required for ECC mode changes.')
 
     def turn_off(self):
         cmd = '%s -e 0' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
         raise RuntimeError('Reboot is required for ECC mode changes.')
 
 
@@ -68,11 +68,11 @@ class PersistenceMode(GPUMode):
 
     def turn_on(self):
         cmd = '%s -pm 1' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
     def turn_off(self):
         cmd = '%s -pm 0' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
 
 class AccountingMode(GPUMode):
@@ -86,11 +86,11 @@ class AccountingMode(GPUMode):
 
     def turn_on(self):
         cmd = '%s -am 1' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
     def turn_off(self):
         cmd = '%s -am 0' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
 
 class AutoBoostMode(GPUMode):
@@ -105,11 +105,11 @@ class AutoBoostMode(GPUMode):
 
     def turn_on(self):
         cmd = '%s --auto-boost-default=DISABLED' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
     def turn_off(self):
         cmd = '%s --auto-boost-default=ENABLED' % (self._cmd_prefix,)
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, shell=True)
 
 
 class GPU(object):
@@ -140,7 +140,7 @@ class GPUManager(object):
     @classmethod
     def list_gpus(cls):
         cmd = 'TOOL -q'
-        output = subprocess.check_output(cmd)
+        output = subprocess.check_output(cmd, shell=True)
         pattern = 'Attached GPUs\s*:\s*(\d+)'
         result = re.search(pattern, output)
         gpu_count = int(result.group(1))
