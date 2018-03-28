@@ -43,7 +43,7 @@ def get_script(gpu_count, network, tool_dir, synthetic=False):
     return script
 
 
-def run(log_dir,
+def run_old(log_dir,
         log_file,
         devId,
         gpuCount,
@@ -205,7 +205,7 @@ def get_epoch_size(network):
     return default
 
 
-def run_sh(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
+def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
            epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
     benchmark_training_speed, benchmark_accuracy = '-', '-'
     log_path = os.path.join(log_dir, 'training.log')
