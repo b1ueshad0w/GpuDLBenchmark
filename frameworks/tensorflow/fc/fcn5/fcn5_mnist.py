@@ -5,9 +5,9 @@ import os
 import numpy as np
 from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
-from globalconfig import MNIST_DATA_DIR
+from globalconfig import MNIST_DATA_DIR, FCN_EPOCH_SIZE
 
-EPOCH_SIZE = 60000
+EPOCH_SIZE = FCN_EPOCH_SIZE
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import time
 from datapreprocess import cifar10_input
-
+import globalconfig
 import tensorflow as tf
 import numpy as np
 import os
@@ -36,7 +36,7 @@ tf.app.flags.DEFINE_boolean('log_device_placement', False,
 tf.app.flags.DEFINE_boolean('use_dataset', False, """True to use datasets""")
 tf.app.flags.DEFINE_string('data_format', 'NCHW', """NCHW for GPU and NHWC for CPU.""")
 
-EPOCH_SIZE = 50000
+EPOCH_SIZE = globalconfig.RESNET_EPOCH_SIZE
 TEST_SIZE = 10000
 
 

@@ -7,7 +7,6 @@ import tensorflow as tf
 import numpy as np
 import os
 import globalconfig
-from benchmark import TRAINING_SUMMARY_TEMPLATE
 
 
 parameters = []
@@ -20,7 +19,7 @@ affine_counter = 1
 
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
-tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
+tf.app.flags.DEFINE_integer('batchSize', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epoch_size', 60000, """Epoch size.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('log_step', 50, """Log step""")
@@ -40,7 +39,7 @@ tf.app.flags.DEFINE_boolean('data_format', 'NCHW', """NCHW for GPU and NHWC for 
 data_format = 'NCHW'
 data_format_c = 'channels_first'
 
-EPOCH_SIZE = 50000
+EPOCH_SIZE = globalconfig.ALEXNET_EPOCH_SIZE
 TEST_SIZE = 10000
 
 
@@ -194,10 +193,10 @@ def train():
         labels = None
         with tf.device('/cpu:0'):
             if FLAGS.use_dataset:
-                iterator, initalizer = cifar10_input.dataSet(FLAGS.data_dir, FLAGS.batch_size, data_format=data_format)
+                iterator, initalizer = cifar10_input.dataSet(FLAGS.data_dir, FLAGS.batchSize, data_format=data_format)
                 images, labels = iterator.get_next()
             else:
-                images, labels = cifar10_input.inputs(False, FLAGS.data_dir, FLAGS.batch_size, data_format=data_format)
+                images, labels = cifar10_input.inputs(False, FLAGS.data_dir, FLAGS.batchSize, data_format=data_format)
 
         labels = tf.contrib.layers.one_hot_encoding(labels, 10)
         logits = inference(images)
@@ -220,7 +219,7 @@ def train():
         else:
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-        real_batch_size = FLAGS.batch_size
+        real_batch_size = FLAGS.batchSize
         num_batches_per_epoch = int((FLAGS.epoch_size + real_batch_size - 1) / real_batch_size)
         iterations = FLAGS.epochs * num_batches_per_epoch
         average_batch_time = 0.0
@@ -235,7 +234,7 @@ def train():
             average_batch_time += float(duration)
             assert not np.isnan(loss_v), 'Model diverged with loss = NaN'
             if step % FLAGS.log_step == 0:
-                examples_per_sec = FLAGS.batch_size / duration
+                examples_per_sec = FLAGS.batchSize / duration
                 sec_per_batch = float(duration)
                 format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f sec/batch)')
                 print (format_str % (datetime.now(), step, loss_v, examples_per_sec, sec_per_batch))

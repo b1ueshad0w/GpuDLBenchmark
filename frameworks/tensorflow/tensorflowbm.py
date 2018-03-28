@@ -12,13 +12,10 @@ import os
 import time
 import shutil
 import subprocess
-from globalconfig import FCN, CNN, RNN
+from globalconfig import FCN, CNN, RNN, RESNET_EPOCH_SIZE, ALEXNET_EPOCH_SIZE, FCN_EPOCH_SIZE
 from nvidiasmi import GPUAccounting
 from benchmark import TestConfigEntry, Framework, NetworkType, Status, Synthetic, TestResultEntry
 from extract_info import extract_info_tensorflow, extract_info_tensorflow_synthetic
-from frameworks.tensorflow.cnn.resnet.resnet_bm import EPOCH_SIZE as RESNET_EPOCH_SIZE
-from frameworks.tensorflow.cnn.alexnet.alexnet_bm import EPOCH_SIZE as ALEXNET_EPOCH_SIZE
-from frameworks.tensorflow.fc.fcn5.fcn5_mnist import EPOCH_SIZE as FCN_EPOCH_SIZE
 import logging
 logger = logging.getLogger(__name__ if __name__ != '__main__' else os.path.splitext(os.path.basename(__file__))[0])
 logger.setLevel(logging.DEBUG)
@@ -66,9 +63,9 @@ def run(log_dir,
 
     # Set system variable
     # See: https://www.tensorflow.org/performance/performance_guide
-    os.environ['OMP_NUM_THREADS'] = cpuCount  # Specifies the number of threads to use.
-    os.environ['OPENBLAS_NUM_THREADS'] = cpuCount
-    os.environ['MKL_NUM_THREADS'] = cpuCount
+    os.environ['OMP_NUM_THREADS'] = str(cpuCount)  # Specifies the number of threads to use.
+    os.environ['OPENBLAS_NUM_THREADS'] = str(cpuCount)
+    os.environ['MKL_NUM_THREADS'] = str(cpuCount)
 
     # Build cmd for benchmark
     root_path = os.path.dirname(os.path.abspath(__file__))
@@ -312,7 +309,6 @@ def set_launch_args():
     parser.add_argument('-cpuCount', type=int, default=1, help='number of cpus in used for cpu version')
     parser.add_argument('-lr', type=str, help='learning rate')
     parser.add_argument('-netType', type=str, help='network type')
-    parser.add_argument('-log_dir', type=str, help='Directory to save logs.')
     parser.add_argument('-test_summary_file', type=str, help='File to record benchmark result.')
     parser.add_argument('-synthetic', type=bool, default=False, help='whether to use the synthetic data')
     args = parser.parse_args()
@@ -336,4 +332,5 @@ def set_launch_args():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     set_launch_args()
