@@ -219,9 +219,9 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         epoch_size = get_epoch_size(network)
 
     # Set system variable
-    os.environ['OMP_NUM_THREADS'] = cpu_count
-    os.environ['OPENBLAS_NUM_THREADS'] = cpu_count
-    os.environ['MKL_NUM_THREADS'] = cpu_count
+    os.environ['OMP_NUM_THREADS'] = str(cpu_count)
+    os.environ['OPENBLAS_NUM_THREADS'] = str(cpu_count)
+    os.environ['MKL_NUM_THREADS'] = str(cpu_count)
 
     # Build cmd for benchmark
     root_path = os.path.dirname(os.path.abspath(__file__))
