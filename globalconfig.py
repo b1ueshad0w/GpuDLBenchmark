@@ -31,11 +31,11 @@ class NetworkType(object):
 
 
 class Synthetic(object):
-    true = 'True'
-    false = 'False'
+    true = '1'
+    false = '0'
 
 
 class Status(object):
-    enabled = 'True'
-    disabled = 'False'
+    enabled = '1'
+    disabled = '0'
 

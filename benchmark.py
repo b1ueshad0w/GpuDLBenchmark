@@ -124,7 +124,7 @@ def run(config_file, log_dir=None, test_summary_file=None):
             if config.enabled != Status.enabled:
                 continue
             os.environ['training_speed'] = str(0)
-            logger.info('Running test with config: %s' % str(config))
+            logger.info('===== Running test with config: %s =====' % str(config))
             sub_benchmark_file_name = config.framework + 'bm.py'
             sub_benchmark = os.path.join(PROJECT_ROOT, 'frameworks', config.framework, sub_benchmark_file_name)
             if not os.path.exists(sub_benchmark):
@@ -175,9 +175,9 @@ def run(config_file, log_dir=None, test_summary_file=None):
 def set_arguments():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config_file", help="file path of config file", type=str)
-    parser.add_argument("-l", "--log_dir", help="Directory for logs.", type=str, default=None)
-    parser.add_argument("-t", "--test_summary_file", help="test_summary_file", type=int, default=None)
+    parser.add_argument("-config", "--config_file", help="file path of config file", type=str)
+    parser.add_argument("-log_dir", "--log_dir", help="Directory for logs.", type=str, default=None)
+    parser.add_argument("-test_summary_file", "--test_summary_file", help="test_summary_file", type=int, default=None)
     args = parser.parse_args()
     run(args.config_file, log_dir=args.log_dir, test_summary_file=args.test_summary_file)
 
