@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import time
-import cifar10_input
+from datapreprocess import cifar10_input
 #import unpickle as cifar10_input
 
 import tensorflow as tf

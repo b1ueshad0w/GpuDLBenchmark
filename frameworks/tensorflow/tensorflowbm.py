@@ -152,7 +152,8 @@ def evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, trai
         logger.error('Executing shell failed: %s' % eval_cmd)
     else:
         logger.debug('Executing shell success: %s' % eval_cmd)
-    shutil.rmtree(eval_dir)
+    if eval_dir and os.path.isdir(eval_dir):
+        shutil.rmtree(eval_dir)
 
     with open(eval_log_path, 'r') as f:
         content = f.read()
