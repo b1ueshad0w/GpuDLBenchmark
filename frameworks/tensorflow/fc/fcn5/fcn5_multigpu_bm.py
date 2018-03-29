@@ -5,7 +5,7 @@ import time
 import numpy as np
 from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
-from frameworks.tensorflow.fc import models
+from frameworks.tensorflow.fc.fcn5 import models
 from globalconfig import MNIST_DATA_DIR
 
 FLAGS = tf.app.flags.FLAGS
@@ -232,8 +232,8 @@ def train(model='fcn5'):
         average_batch_time /= iterations
         print 'average_batch_time: ', average_batch_time
         print('epoch_info: %s' % ','.join(epochs_info))
-		accuracy_value = accuracy.eval(session=sess, feed_dict=feed_dict)
-		print("test accuracy %g" % accuracy_value)
+        accuracy_value = accuracy.eval(session=sess, feed_dict=feed_dict)
+        print("Final test accuracy %g" % accuracy_value)
 
 
 def main(argv=None):

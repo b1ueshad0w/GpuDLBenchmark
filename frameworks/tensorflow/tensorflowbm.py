@@ -167,7 +167,7 @@ def evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, trai
 def evaluation_fcn5(train_log_path):
     with open(train_log_path, 'r') as f:
         content = f.read()
-        pattern = 'test accuracy (\d+\.\d+)\naverage_batch_time'
+        pattern = 'Final test accuracy (\d+\.\d+)'
         result = re.search(pattern, content)
         if not result:
             logging.error('Could not find accuracy info in fc5 train log: %s' % train_log_path)

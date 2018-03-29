@@ -149,7 +149,7 @@ def train(model='fcn5'):
         print 'average_batch_time: ', average_batch_time
         print('epoch_info: %s' % ','.join(epochs_info))
         accuracy_value = accuracy.eval(feed_dict={images: mnist.test.images, labels: mnist.test.labels})
-        print("test accuracy %g" % accuracy_value)
+        print("Final test accuracy %g" % accuracy_value)
 
 
 def main(argv=None):
