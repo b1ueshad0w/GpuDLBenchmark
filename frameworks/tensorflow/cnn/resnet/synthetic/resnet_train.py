@@ -85,7 +85,8 @@ def train(is_training, logits, images, labels):
                 sys.exit(1)
             print "resume", latest
             saver.restore(sess, latest)
-
+        
+        very_start = time.time()
         for x in xrange(FLAGS.max_steps + 1):
             start_time = time.time()
 
@@ -127,6 +128,9 @@ def train(is_training, logits, images, labels):
                 # _, top1_error_value = sess.run([val_op, top1_error], options={ is_training: False })
                 _, top1_error_value = sess.run([val_op, top1_error])
                 print('Validation top1 error %.2f' % top1_error_value)
+        total_time = time.time() - very_start
+        ave_batch_time = total_time / FLAGS.max_steps
+        print('across %d steps, %.3f +/- %.3f sec / batch' % (FLAGS.max_steps, ave_batch_time, 0))
 
 
 def set_parameters(epochs, minibatch, iterations, device_id):
