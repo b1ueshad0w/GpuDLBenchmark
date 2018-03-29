@@ -292,7 +292,8 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
             test_result_str = ','.join([str(e) for e in test_result])
             f.write('%s\n' % test_result_str)
 
-    shutil.rmtree(train_dir)
+    if train_dir and os.path.isdir(train_dir):  # train_dir may be not used and thus not exist
+        shutil.rmtree(train_dir)
 
 
 def set_launch_args():

@@ -163,7 +163,13 @@ def run(config_file, log_dir=None, test_summary_file=None):
             args_str = ' '.join(['-%s %s' % (k, v) for k, v in args.items()])
             cmd = 'python {scriptFile} {argsStr}'.format(scriptFile=sub_benchmark, argsStr=args_str)
             logger.debug('Executing shell: %s' % cmd)
-            subprocess.check_call(cmd, shell=True)
+            try:
+                subprocess.check_call(cmd, shell=True)
+                logger.info('Executing shell success: %s' % cmd)
+                logger.info('Config run success: %s' % str(config))
+            except subprocess.CalledProcessError:
+                logger.error('Executing shell failed: %s' % cmd)
+                continue
 
 
 def set_arguments():
