@@ -11,9 +11,10 @@ import re
 import os
 import time
 import shutil
+import csv
 import subprocess
 from globalconfig import FCN, CNN, RNN, RESNET_EPOCH_SIZE, ALEXNET_EPOCH_SIZE, FCN_EPOCH_SIZE
-from nvidiasmi import GPUAccounting
+from nvidiasmi import GPUAccounting, GPUAccountingEntry
 from benchmark import TestConfigEntry, Framework, NetworkType, Status, Synthetic, TestResultEntry
 from extract_info import extract_info_tensorflow, extract_info_tensorflow_synthetic
 import logging
@@ -207,6 +208,18 @@ def get_epoch_size(network):
     return default
 
 
+def parse_gpu_accounting_log(log_file):
+    with open(log_file, 'rb') as f:
+        reader = csv.reader(f)
+        next(reader, None)  # skip the header
+        entries = [GPUAccountingEntry(*row) for row in reader]
+        valid_entries = entries[::2]
+        gpu_utilization = ';'.join([e.gpu_util for e in valid_entries])
+        mem_utilization = ';'.join([e.mem_util for e in valid_entries])
+        max_memory_usage = ';'.join([e.max_memory_usage for e in valid_entries])
+        return gpu_utilization, mem_utilization, max_memory_usage
+
+
 def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
            epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
     benchmark_training_speed, benchmark_accuracy = '-', '-'
@@ -271,6 +284,9 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         logger.debug('Executing shell success: %s' % cmd)
     time_elapsed = time.time() - start_time
 
+    # Parse gpu accounting file and extract metrics
+    gpu_utilization, mem_utilization, max_memory_usage = parse_gpu_accounting_log(gpu_usage_csv)
+
     # Parse log file and extract benchmark info
     # average_batch_time
     benchmark_training_speed = extract_info_tensorflow_synthetic(log_path) \
@@ -285,7 +301,8 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         logFile.write("\nTotal time: %s\ncmd: %s" % (str(time_elapsed), cmd))
 
     test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id, gpu_count, batch_size, num_epochs,
-                                  epoch_size, learning_rate, synthetic, benchmark_training_speed, benchmark_accuracy)
+                                  epoch_size, learning_rate, synthetic, benchmark_training_speed, benchmark_accuracy,
+                                  gpu_utilization, mem_utilization, max_memory_usage)
 
     if test_result_file and os.path.isfile(test_result_file):
         with open(test_result_file, 'a') as f:

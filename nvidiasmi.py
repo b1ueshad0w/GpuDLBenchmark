@@ -9,6 +9,7 @@ Created by gogleyin on 3/22/18.
 
 import subprocess
 import re
+from collections import namedtuple
 
 TOOL = 'sudo nvidia-smi'
 
@@ -108,12 +109,26 @@ class AutoBoostMode(GPUMode):
         return 'On' in output.splitlines()[-3]
 
     def turn_on(self):
-        cmd = '%s --auto-boost-default=DISABLED' % (self._cmd_prefix,)
+        cmd = '%s --auto-boost-default=ENABLED' % (self._cmd_prefix,)
         subprocess.check_call(cmd, shell=True)
 
     def turn_off(self):
-        cmd = '%s --auto-boost-default=ENABLED' % (self._cmd_prefix,)
+        cmd = '%s --auto-boost-default=DISABLED' % (self._cmd_prefix,)
         subprocess.check_call(cmd, shell=True)
+
+
+GPU_ACCOUNTING_FIELDS = [
+    'timestamp',
+    'pid',
+    'time',
+    'gpu_name',
+    'gpu_serial',
+    'gpu_util',
+    'mem_util',
+    'max_memory_usage',
+]
+
+GPUAccountingEntry = namedtuple('GPUAccountingEntry', GPU_ACCOUNTING_FIELDS)
 
 
 class GPU(object):
@@ -130,8 +145,7 @@ class GPU(object):
         self.auto_boost_mode = AutoBoostMode(device_id)
 
     def get_accounting_info(self, to_file=None):
-        cmd = '%s --query-accounted-apps=timestamp,pid,time,gpu_name,gpu_util,mem_util,max_memory_usage ' \
-              '--format=csv' % (self._cmd_prefix,)
+        cmd = '%s --query-accounted-apps=%s --format=csv' % (','.join(GPU_ACCOUNTING_FIELDS), self._cmd_prefix,)
         if to_file:
             cmd += ' > %s' % to_file
         subprocess.check_call(cmd, shell=True)

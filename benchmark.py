@@ -51,6 +51,9 @@ TestResultFields = [
     'synthetic',
     'training_speed',
     'accuracy',
+    'gpu_utilization',
+    'mem_utilization',
+    'max_memory_usage',
 ]
 
 TestConfigEntry = namedtuple('TestConfigEntry', FIELDS)
@@ -92,7 +95,7 @@ def pretest(gpus):
             gpu.ecc_mode.turn_off()
         if gpu.persistence_mode.status == ModeStatus.Off:
             gpu.persistence_mode.turn_on()
-        if gpu.auto_boost_mode.status == ModeStatus.Off:
+        if gpu.auto_boost_mode.status == ModeStatus.On:
             gpu.auto_boost_mode.turn_off()
 
 
@@ -169,6 +172,7 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 logger.info('Config run success: %s' % str(config))
             except subprocess.CalledProcessError:
                 logger.error('Executing shell failed: %s' % cmd)
+                logger.info('Config run failed: %s' % str(config))
                 continue
 
 
