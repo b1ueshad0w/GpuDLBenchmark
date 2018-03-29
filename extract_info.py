@@ -184,7 +184,7 @@ def extract_info_tensorflow(filename):
 
 def extract_info_tensorflow_synthetic(filepath):
     # e.g. Forward-backward across 50 steps, 0.698 +/- 0.100 sec / batch
-    pattern = 'Forward-backward across \d+ steps, (\d+\.\d+) .+'
+    pattern = 'across \d+ steps, (\d+\.\d+) .+'
     with open(filepath, 'r') as f:
         content = f.read()
         result = re.search(pattern, content)
