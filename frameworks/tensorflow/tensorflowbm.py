@@ -158,7 +158,7 @@ def evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, trai
         pattern = 'precision @ 1 = (\d+\.\d+)'
         result = re.search(pattern, content)
         if not result:
-            logging.error('Could not find accuracy info in cnn train log: %s' % train_log_path)
+            logging.error('Could not find accuracy info in cnn evaluation log: %s' % eval_log_path)
             return 'err'
         return result.group(1)
 

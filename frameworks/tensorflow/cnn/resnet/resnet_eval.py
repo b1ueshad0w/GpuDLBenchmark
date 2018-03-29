@@ -42,7 +42,7 @@ import numpy as np
 import tensorflow as tf
 
 # from tensorflow.models.image.cifar10 import cifar10
-from frameworks.tensorflow.cnn.alexnet.alexnet_bm import inference
+from frameworks.tensorflow.cnn.resnet.resnet_bm import inference_small
 from datapreprocess import cifar10_input
 
 FLAGS = tf.app.flags.FLAGS
@@ -126,7 +126,7 @@ def evaluate():
 
         # Build a Graph that computes the logits predictions from the
         # inference model.
-        logits = inference(images)
+        logits = inference_small(images, is_training=False)
 
         # Calculate predictions.
         top_k_op = tf.nn.in_top_k(logits, labels, 1)
