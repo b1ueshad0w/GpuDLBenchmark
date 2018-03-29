@@ -150,6 +150,8 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 'netType': config.network_type,
                 'log': log_file_path,
                 'batchSize': config.batch_size,
+                'numEpochs': config.number_of_epochs,
+                'epochSize': config.epoch_size,
                 'network': config.network_name,
                 'lr': config.learning_rate,
                 'log_dir': config_dir,
