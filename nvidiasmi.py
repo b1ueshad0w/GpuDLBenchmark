@@ -145,7 +145,7 @@ class GPU(object):
         self.auto_boost_mode = AutoBoostMode(device_id)
 
     def get_accounting_info(self, to_file=None):
-        cmd = '%s --query-accounted-apps=%s --format=csv' % (','.join(GPU_ACCOUNTING_FIELDS), self._cmd_prefix,)
+        cmd = '%s --query-accounted-apps=%s --format=csv' % (self._cmd_prefix, ','.join(GPU_ACCOUNTING_FIELDS))
         if to_file:
             cmd += ' > %s' % to_file
         subprocess.check_call(cmd, shell=True)
