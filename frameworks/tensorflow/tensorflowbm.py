@@ -301,9 +301,10 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     with open(log_path, "a") as logFile:
         logFile.write("\nTotal time: %s\ncmd: %s" % (str(time_elapsed), cmd))
 
-    test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id, gpu_count, batch_size, num_epochs,
-                                  epoch_size, learning_rate, synthetic, benchmark_training_speed, benchmark_accuracy,
-                                  gpu_utilization, mem_utilization, max_memory_usage)
+    test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id.replace(',', ';'), gpu_count,
+                                  batch_size, num_epochs, epoch_size, learning_rate, synthetic,
+                                  benchmark_training_speed, benchmark_accuracy, gpu_utilization, mem_utilization,
+                                  max_memory_usage)
 
     if test_result_file and os.path.isfile(test_result_file):
         with open(test_result_file, 'a') as f:
