@@ -89,7 +89,7 @@ def save_a_result(test_result_entry, result_file):
         writer.writerow(test_result_entry)
 
 
-def pretest(gpus):
+def pretest(gpus, log_dir):
     for gpu in gpus:
         if gpu.ecc_mode.status == ModeStatus.On:
             gpu.ecc_mode.turn_off()
@@ -97,6 +97,16 @@ def pretest(gpus):
             gpu.persistence_mode.turn_on()
         if gpu.auto_boost_mode.status == ModeStatus.On:
             gpu.auto_boost_mode.turn_off()
+
+    collect_env_sh = os.path.join(PROJECT_ROOT, 'collect_systen_info.sh')
+    if os.path.isfile(collect_env_sh):
+        system_info_log = os.path.join(log_dir, 'system-info.txt')
+        cmd = 'bash %s %s' % (collect_env_sh, system_info_log)
+        logger.debug('[Querying system info] Executing shell: %s' % cmd)
+        if os.system(cmd) != 0:
+            logger.error('[Querying system info] Executing shell failed: %s' % cmd)
+        else:
+            logger.debug('[Querying system info] Executing shell success: %s' % cmd)
 
 
 def run(config_file, log_dir=None, test_summary_file=None):
@@ -116,7 +126,7 @@ def run(config_file, log_dir=None, test_summary_file=None):
     gpus = GPUManager.list_gpus()
     gpu_count = len(gpus)
     logger.info('Found %d GPUs.' % len(gpus))
-    pretest(gpus)
+    pretest(gpus, log_dir)
     devId = ','.join([str(i) for i in range(gpu_count)])  # use all GPUs.
 
     with open(config_file, 'rb') as csv_file:
