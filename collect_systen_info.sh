@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+ARGS_COUNT=1
 
 CollectEnv()
 {
@@ -35,5 +36,12 @@ CollectEnv()
   cat /proc/meminfo >> $logFile
 }
 
+vars_count=$#
+if (( $vars_count < $ARGS_COUNT )); then
+  echo "Error: This shell script needs at least $ARGS_COUNT argument(s)!"
+  exit 1
+fi
+
+logPath=$1
 
 CollectEnv ${logPath}
