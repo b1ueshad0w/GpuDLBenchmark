@@ -160,7 +160,7 @@ def evaluation_cnn(batch_size, network_name, tool_path, log_dir, train_dir, trai
         pattern = 'precision @ 1 = (\d+\.\d+)'
         result = re.search(pattern, content)
         if not result:
-            logging.error('Could not find accuracy info in cnn evaluation log: %s' % eval_log_path)
+            logger.error('Could not find accuracy info in cnn evaluation log: %s' % eval_log_path)
             return 'err'
         return result.group(1)
 
@@ -171,7 +171,7 @@ def evaluation_fcn5(train_log_path):
         pattern = 'Final test accuracy (\d+\.\d+)'
         result = re.search(pattern, content)
         if not result:
-            logging.error('Could not find accuracy info in fc5 train log: %s' % train_log_path)
+            logger.error('Could not find accuracy info in fc5 train log: %s' % train_log_path)
             return 'err'
         return result.group(1)
 
@@ -182,7 +182,7 @@ def evaluation_rnn(train_log_path):
         pattern = 'Test Perplexity: (\d+\.\d+)'
         result = re.search(pattern, content)
         if not result:
-            logging.error('Could not find accuracy info in rnn train log: %s' % train_log_path)
+            logger.error('Could not find accuracy info in rnn train log: %s' % train_log_path)
             return 'err'
         return result.group(1)
 
@@ -223,6 +223,11 @@ def parse_gpu_accounting_log(log_file):
 
 def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
            epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
+    if not log_dir:
+        logger.error('log_dir is None!')
+        return
+    if not os.path.isdir(log_dir):
+        os.makedirs(log_dir)
     benchmark_training_speed, benchmark_accuracy = '-', '-'
     log_path = os.path.join(log_dir, 'training.log')
     train_dir = os.path.join(log_dir, 'train-dir-%s' % str(int(time.time())))
@@ -268,7 +273,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         envs['script_path'] = os.path.join(tool_path, 'synthetic', '%s_synthetic.py' % network)
     script_path = os.path.join(tool_path, script_name)
     if not os.path.isfile(script_path):
-        logging.warning('Script not found: %s' % (script_path,))
+        logger.warning('Script not found: %s' % (script_path,))
         save_benchmark_result(benchmark_training_speed, benchmark_accuracy)
         return
 
