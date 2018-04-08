@@ -8,6 +8,8 @@ import tensorflow as tf
 import numpy as np
 import os
 
+from globalconfig import ALEXNET_EPOCH_SIZE
+
 FLAGS = tf.app.flags.FLAGS
 
 parameters = []
@@ -23,6 +25,7 @@ FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_integer('epoch_size', ALEXNET_EPOCH_SIZE, """Epoch size.""")
 tf.app.flags.DEFINE_integer('learning_rate', 0.001, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
@@ -40,7 +43,6 @@ tf.app.flags.DEFINE_integer('num_gpus', 2, """How many GPUs to use.""")
 tf.app.flags.DEFINE_string('local_ps_device', 'GPU', """Local parameter server GPU if gpus are peered or CPU otherwise try both.""")
 tf.app.flags.DEFINE_boolean('use_dataset', False, """True to use datasets""")
 
-EPOCH_SIZE = 50000
 TEST_SIZE = 10000
 
 data_format = 'NCHW'
@@ -276,7 +278,7 @@ def train():
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         real_batch_size = FLAGS.batch_size * FLAGS.num_gpus
-        num_batches_per_epoch = int((EPOCH_SIZE + real_batch_size - 1)/ real_batch_size)
+        num_batches_per_epoch = int((FLAGS.epoch_size + real_batch_size - 1)/ real_batch_size)
         iterations = FLAGS.epochs * num_batches_per_epoch 
         average_batch_time = 0.0
         epochs_info = []
