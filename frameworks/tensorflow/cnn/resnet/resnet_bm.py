@@ -8,6 +8,7 @@ import numpy as np
 import os
 from frameworks.tensorflow.cnn.resnet.resnet import inference_small, loss
 
+EPOCH_SIZE = globalconfig.RESNET_EPOCH_SIZE
 
 parameters = []
 device_str = ''
@@ -21,6 +22,7 @@ FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batch_size', 128, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_integer('epoch_size', EPOCH_SIZE, """Epoch size.""")
 tf.app.flags.DEFINE_integer('learning_rate', 0.01, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
@@ -36,7 +38,6 @@ tf.app.flags.DEFINE_boolean('log_device_placement', False,
 tf.app.flags.DEFINE_boolean('use_dataset', False, """True to use datasets""")
 tf.app.flags.DEFINE_string('data_format', 'NCHW', """NCHW for GPU and NHWC for CPU.""")
 
-EPOCH_SIZE = globalconfig.RESNET_EPOCH_SIZE
 TEST_SIZE = 10000
 
 
@@ -95,7 +96,7 @@ def train():
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         real_batch_size = FLAGS.batch_size
-        num_batches_per_epoch = int((EPOCH_SIZE + real_batch_size - 1) / real_batch_size)
+        num_batches_per_epoch = int((FLAGS.epoch_size + real_batch_size - 1) / real_batch_size)
         iterations = FLAGS.epochs * num_batches_per_epoch
         average_batch_time = 0.0
 

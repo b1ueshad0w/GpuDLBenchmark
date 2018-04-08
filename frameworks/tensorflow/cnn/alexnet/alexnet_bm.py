@@ -8,6 +8,7 @@ import numpy as np
 import os
 import globalconfig
 
+EPOCH_SIZE = globalconfig.ALEXNET_EPOCH_SIZE
 
 parameters = []
 device_str = ''
@@ -20,7 +21,7 @@ affine_counter = 1
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
 tf.app.flags.DEFINE_integer('batchSize', 1024, """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_integer('epoch_size', 60000, """Epoch size.""")
+tf.app.flags.DEFINE_integer('epoch_size', EPOCH_SIZE, """Epoch size.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('log_step', 50, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
@@ -39,7 +40,6 @@ tf.app.flags.DEFINE_boolean('data_format', 'NCHW', """NCHW for GPU and NHWC for 
 data_format = 'NCHW'
 data_format_c = 'channels_first'
 
-EPOCH_SIZE = globalconfig.ALEXNET_EPOCH_SIZE
 TEST_SIZE = 10000
 
 
