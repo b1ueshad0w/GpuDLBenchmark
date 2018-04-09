@@ -26,6 +26,6 @@ You should have the corresponding deep learning frameworks installed (e.g. Tenso
 
 Also all cuda-related things (GPU driver, cuDNN library, etc.) is already set up.
 
-Finally Put the CIFAR10 and MNIST dataset under: `~/data/tensorflow`
+Finally specify the CIFAR10 and MNIST dataset path in `globalconfig.py`.
 
 > You should create an image or use docker to simplify your setup work across different test machines.
