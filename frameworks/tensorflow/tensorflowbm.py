@@ -79,7 +79,6 @@ def run_old(log_dir,
         'epochs': numEpochs,
         'epoch_size': epochSize,
         'learning_rate': lr,
-        'training_summary_file': os.path.join(log_dir, 'training_summary.log')
     }
     if int(gpuCount) > 1:
         args['gpu_count'] = gpuCount

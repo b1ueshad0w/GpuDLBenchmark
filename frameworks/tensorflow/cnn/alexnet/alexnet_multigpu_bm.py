@@ -26,7 +26,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('epoch_size', ALEXNET_EPOCH_SIZE, """Epoch size.""")
-tf.app.flags.DEFINE_integer('learning_rate', 0.001, """Learning rate.""")
+tf.app.flags.DEFINE_float('learning_rate', 0.001, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_string('device_ids', '', """Device ids. split by comma, e.g. 0,1""")
