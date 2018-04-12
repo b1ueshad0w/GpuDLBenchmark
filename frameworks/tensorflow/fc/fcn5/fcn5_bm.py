@@ -13,6 +13,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epoch_size', EPOCH_SIZE, """Dataset size.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_float('learning_rate', 0.05, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 10, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_integer('device_id', 0, """Device id.""")
@@ -107,8 +108,7 @@ def train(model='fcn5'):
         predictionCorrectness = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
         accuracy = tf.reduce_mean(tf.cast(predictionCorrectness, "float"))
 
-        lr = 0.05
-        optimizer = tf.train.MomentumOptimizer(lr, 0.9).minimize(loss)
+        optimizer = tf.train.MomentumOptimizer(FLAGS.learning_rate, 0.9).minimize(loss)
 
         init = tf.global_variables_initializer()
 

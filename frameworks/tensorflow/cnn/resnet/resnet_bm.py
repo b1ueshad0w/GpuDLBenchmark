@@ -23,7 +23,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', 128, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('epoch_size', EPOCH_SIZE, """Epoch size.""")
-tf.app.flags.DEFINE_integer('learning_rate', 0.01, """Learning rate.""")
+tf.app.flags.DEFINE_float('learning_rate', 0.01, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_integer('device_id', 0, """Device id.""")

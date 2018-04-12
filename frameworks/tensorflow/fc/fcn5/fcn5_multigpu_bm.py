@@ -16,6 +16,7 @@ tf.app.flags.DEFINE_string('train_dir', './multigpu-trained',
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_float('learning_rate', 0.05, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 10, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_string('device_ids', '', """Device ids. split by comma, e.g. 0,1""")
@@ -102,9 +103,8 @@ def train(model='fcn5'):
         else:
             device_ids = device_ids.split(',')
 
-        lr = 0.05
         # optimizer = tf.train.GradientDescentOptimizer(lr)
-        optimizer = tf.train.MomentumOptimizer(lr, 0.9)
+        optimizer = tf.train.MomentumOptimizer(FLAGS.learning_rate, 0.9)
 
         def assign_to_device(device, ps_device=FLAGS.local_ps_device):
             worker_device = device

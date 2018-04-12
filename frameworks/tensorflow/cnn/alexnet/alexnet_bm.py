@@ -26,7 +26,7 @@ tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
 tf.app.flags.DEFINE_integer('log_step', 50, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_integer('device_id', 0, """Device id.""")
-tf.app.flags.DEFINE_integer('learning_rate', 0.001, """Learning rate.""")
+tf.app.flags.DEFINE_float('learning_rate', 0.001, """Learning rate.""")
 tf.app.flags.DEFINE_string('data_dir', globalconfig.CIFAR10_DATA_DIR, """Data directory""")
 tf.app.flags.DEFINE_string('train_dir', './trained_models/',
                            """Path to the data directory.""")
