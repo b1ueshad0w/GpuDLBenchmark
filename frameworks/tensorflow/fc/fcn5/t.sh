@@ -6,6 +6,7 @@ CUDA_VISIBLE_DEVICES=$deviceId python ${script_path} \
  --train_dir=${train_dir} \
  --batch_size=$batch_size \
  --epochs=$epochs \
+ --epoch_size=${epoch_size} \
  --learning_rate=${learning_rate} \
  --device_id=$deviceId \
  &> $logFile

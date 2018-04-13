@@ -7,6 +7,7 @@ CUDA_VISIBLE_DEVICES=$deviceId python ${script_path} \
     --train_dir=${train_dir} \
     --batch_size=${real_batch_size} \
     --epochs=$epochs \
+    --epoch_size=${epoch_size} \
     --learning_rate=${learning_rate} \
     --device_ids=$deviceId \
     --num_gpus=${gpu_count} \

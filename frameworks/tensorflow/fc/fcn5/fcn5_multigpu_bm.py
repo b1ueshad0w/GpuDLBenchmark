@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime
 from tensorflow.examples.tutorials.mnist import input_data
 from frameworks.tensorflow.fc.fcn5 import models
-from globalconfig import MNIST_DATA_DIR
+from globalconfig import MNIST_DATA_DIR, FCN_EPOCH_SIZE
 
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
@@ -16,6 +16,7 @@ tf.app.flags.DEFINE_string('train_dir', './multigpu-trained',
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('batch_size', 1024, """Number of images to process in a batch.""")
 tf.app.flags.DEFINE_integer('epochs', 40, """Max epochs for training.""")
+tf.app.flags.DEFINE_integer('epoch_size', FCN_EPOCH_SIZE, """Epoch size.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.05, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 10, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
@@ -185,7 +186,7 @@ def train(model='fcn5'):
             sess.run(iterator.initializer)
 
         real_batch_size = FLAGS.batch_size * FLAGS.num_gpus
-        num_batches_per_epoch = int((EPOCH_SIZE + real_batch_size - 1) / real_batch_size)
+        num_batches_per_epoch = int((FLAGS.epoch_size + real_batch_size - 1) / real_batch_size)
         iterations = FLAGS.epochs * num_batches_per_epoch
         average_batch_time = 0.0
         epochs_info = []
