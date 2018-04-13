@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-${batch_size} = `expr ${batch_size} / 2`
+real_batch_size=`expr ${batch_size} / 2`
 
 start=`date +%s.%N`
 CUDA_VISIBLE_DEVICES=$deviceId python ${script_path} \
     --train_dir=${train_dir} \
-    --batch_size=$batch_size \
+    --batch_size=${real_batch_size} \
     --epochs=$epochs \
     --learning_rate=${learning_rate} \
     --device_ids=$deviceId \
