@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+${batch_size} = `expr ${batch_size} / 2`
+
 start=`date +%s.%N`
 CUDA_VISIBLE_DEVICES=$deviceId python ${script_path} \
     --train_dir=${train_dir} \

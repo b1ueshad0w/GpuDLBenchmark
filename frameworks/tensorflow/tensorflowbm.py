@@ -222,12 +222,13 @@ def parse_gpu_accounting_log(log_file):
 
 def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
            epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
+    gpu_count = int(gpu_count)
     if not log_dir:
         logger.error('log_dir is None!')
         return
     if not os.path.isdir(log_dir):
         os.makedirs(log_dir)
-    benchmark_training_speed, benchmark_accuracy = '-', '-'
+    average_batch_time, benchmark_accuracy = '-', '-'
     log_path = os.path.join(log_dir, 'training.log')
     train_dir = os.path.join(log_dir, 'train-dir-%s' % str(int(time.time())))
     gpu_usage_csv = os.path.join(log_dir, 'gpu-accounting.csv')
@@ -248,7 +249,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     tool_path = os.path.join(root_path, net_type, network)
     if not os.path.isdir(tool_path):
         logging.warning('Network not found: %s' % (tool_path,))
-        save_benchmark_result(benchmark_training_speed, benchmark_accuracy)
+        save_benchmark_result(average_batch_time, benchmark_accuracy)
         return
 
     envs = {
@@ -263,8 +264,8 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     }
     script_name = 't.sh'
     envs['script_path'] = os.path.join(tool_path, '%s_bm.py' % network)
-    if int(gpu_count) > 1:
-        envs['gpu_count'] = gpu_count
+    if gpu_count > 1:
+        envs['gpu_count'] = str(gpu_count)
         envs['script_path'] = os.path.join(tool_path, '%s_multigpu_bm.py' % network)
         script_name = 'tm.sh'
     if synthetic == Synthetic.true:
@@ -273,7 +274,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     script_path = os.path.join(tool_path, script_name)
     if not os.path.isfile(script_path):
         logger.warning('Script not found: %s' % (script_path,))
-        save_benchmark_result(benchmark_training_speed, benchmark_accuracy)
+        save_benchmark_result(average_batch_time, benchmark_accuracy)
         return
 
     envs_str = ' '.join(['%s=%s' % (k, v) for k, v in envs.items()])
@@ -284,7 +285,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     with GPUAccounting(gpu_usage_csv):
         if os.system(cmd) != 0:
             logger.error('Executing shell failed: %s.' % cmd)
-            save_benchmark_result(benchmark_training_speed, benchmark_accuracy)
+            save_benchmark_result(average_batch_time, benchmark_accuracy)
             return
         logger.debug('Executing shell success: %s' % cmd)
     time_elapsed = time.time() - start_time
@@ -294,8 +295,11 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
 
     # Parse log file and extract benchmark info
     # average_batch_time
-    benchmark_training_speed = extract_info_tensorflow_synthetic(log_path) \
+    average_batch_time = extract_info_tensorflow_synthetic(log_path) \
         if synthetic == Synthetic.true else extract_info_tensorflow(log_path)
+
+    # In multiple GPUs case, average_batch_time belongs to one GPU.
+    average_batch_time /= gpu_count
 
     # Evaluation
     if synthetic == Synthetic.false:
@@ -305,9 +309,9 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
     with open(log_path, "a") as logFile:
         logFile.write("\nTotal time: %s\ncmd: %s" % (str(time_elapsed), cmd))
 
-    test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id.replace(',', ';'), gpu_count,
+    test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id.replace(',', ';'), str(gpu_count),
                                   batch_size, num_epochs, epoch_size, learning_rate, synthetic,
-                                  benchmark_training_speed, benchmark_accuracy, gpu_utilization, mem_utilization,
+                                  average_batch_time, benchmark_accuracy, gpu_utilization, mem_utilization,
                                   max_memory_usage)
 
     if test_result_file and os.path.isfile(test_result_file):
