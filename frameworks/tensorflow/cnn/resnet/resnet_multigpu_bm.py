@@ -10,7 +10,7 @@ import os
 import operator
 # from resnet import inference, loss
 from frameworks.tensorflow.cnn.resnet.resnet import inference_small, loss
-from globalconfig import MNIST_DATA_DIR, RESNET_EPOCH_SIZE
+from globalconfig import CIFAR10_DATA_DIR, RESNET_EPOCH_SIZE
 
 FLAGS = tf.app.flags.FLAGS
 # Basic model parameters.
@@ -21,7 +21,7 @@ tf.app.flags.DEFINE_float('learning_rate', 0.01, """Learning rate.""")
 tf.app.flags.DEFINE_integer('log_step', 100, """Log step""")
 tf.app.flags.DEFINE_integer('eval_step', 1, """Evaluate step of epoch""")
 tf.app.flags.DEFINE_string('device_ids', None, """Device ids. split by comma, e.g. 0,1""")
-tf.app.flags.DEFINE_string('data_dir', MNIST_DATA_DIR, """Data directory""")
+tf.app.flags.DEFINE_string('data_dir', CIFAR10_DATA_DIR, """Data directory""")
 tf.app.flags.DEFINE_string('train_dir', './trained_models/',
                            """Path to the data directory.""")
 tf.app.flags.DEFINE_boolean('use_fp16', False,
@@ -192,7 +192,7 @@ def train():
             coord.request_stop()
             coord.join(threads)
         average_batch_time /= iterations
-        print('average_batch_time: ', average_batch_time)
+        print('average_batch_time: %s', average_batch_time)
         print ('epoch_info: %s' % ','.join(epochs_info))
 
 
