@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-real_batch_size=`expr ${batch_size} / 2`
+real_batch_size=`expr ${batch_size} / ${gpu_count}`
 
 start=`date +%s.%N`
 CUDA_VISIBLE_DEVICES=$deviceId python ${script_path} \
