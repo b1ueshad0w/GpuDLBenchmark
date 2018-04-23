@@ -174,6 +174,7 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 'devId': devId,
                 'synthetic': config.synthetic,
                 'test_summary_file': test_summary_file,
+                'cpuCountForGpu': config.cpu_count,
             }
             args_str = ' '.join(['-%s %s' % (k, v) for k, v in args.items()])
             cmd = 'python {scriptFile} {argsStr}'.format(scriptFile=sub_benchmark, argsStr=args_str)
