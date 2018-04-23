@@ -30,6 +30,7 @@ FIELDS = [
     'network_name',
     'device_id',
     'device_count',
+    'cpu_count',  # 0 means using the default value. Be careful, this is for deep learning on GPU(s).
     'batch_size',
     'number_of_epochs',
     'epoch_size',
@@ -44,6 +45,7 @@ TestResultFields = [
     'network_name',
     'device_id',
     'device_count',
+    'cpu_count',
     'batch_size',
     'number_of_epochs',
     'epoch_size',

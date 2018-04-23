@@ -15,6 +15,7 @@ import csv
 import subprocess
 from globalconfig import FCN, CNN, RNN, RESNET_EPOCH_SIZE, ALEXNET_EPOCH_SIZE, FCN_EPOCH_SIZE
 from nvidiasmi import GPUAccounting, GPUAccountingEntry
+from cpu import CpuLimiter, ALL_CPU_COUNT
 from benchmark import TestConfigEntry, Framework, NetworkType, Status, Synthetic, TestResultEntry
 from extract_info import extract_info_tensorflow, extract_info_tensorflow_synthetic
 import logging
@@ -220,8 +221,27 @@ def parse_gpu_accounting_log(log_file):
         return gpu_utilization, mem_utilization, max_memory_usage
 
 
-def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, batch_size=64, num_epochs=10,
-           epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
+def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=1, cpu_count_for_gpu=0, batch_size=64,
+        num_epochs=10, epoch_size=None, synthetic=Synthetic.false, test_result_file=None):
+    """
+
+    :param log_dir:
+    :param dev_id:
+    :param net_type:
+    :param network:
+    :param gpu_count:
+    :param learning_rate:
+    :param cpu_count:
+    :param cpu_count_for_gpu: 0 means use all cpu cores.
+    :param batch_size:
+    :param num_epochs:
+    :param epoch_size:
+    :param synthetic:
+    :param test_result_file:
+    :return:
+    """
+    if cpu_count_for_gpu == 0:
+        cpu_count_for_gpu = ALL_CPU_COUNT
     gpu_count = int(gpu_count)
     if not log_dir:
         logger.error('log_dir is None!')
@@ -282,7 +302,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
 
     start_time = time.time()
     logger.debug('Executing shell: %s' % cmd)
-    with GPUAccounting(gpu_usage_csv):
+    with GPUAccounting(gpu_usage_csv), CpuLimiter(cpu_count_for_gpu):
         if os.system(cmd) != 0:
             logger.error('Executing shell failed: %s.' % cmd)
             save_benchmark_result(average_batch_time, benchmark_accuracy)
@@ -310,7 +330,7 @@ def run(log_dir, dev_id, net_type, network, gpu_count, learning_rate, cpu_count=
         logFile.write("\nTotal time: %s\ncmd: %s" % (str(time_elapsed), cmd))
 
     test_result = TestResultEntry(Framework.tensorflow, net_type, network, dev_id.replace(',', ';'), str(gpu_count),
-                                  batch_size, num_epochs, epoch_size, learning_rate, synthetic,
+                                  cpu_count_for_gpu, batch_size, num_epochs, epoch_size, learning_rate, synthetic,
                                   average_batch_time, benchmark_accuracy, gpu_utilization, mem_utilization,
                                   max_memory_usage)
 
@@ -339,6 +359,7 @@ def set_launch_args():
                         help='path to running hosts(config in host file) for multiple machine training.')
     parser.add_argument('-gpuCount', type=int, help='number of gpus in used')
     parser.add_argument('-cpuCount', type=int, default=1, help='number of cpus in used for cpu version')
+    parser.add_argument('-cpuCountForGpu', type=int, default=0, help='number of cpus in used for gpu version')
     parser.add_argument('-lr', type=str, help='learning rate')
     parser.add_argument('-netType', type=str, help='network type')
     parser.add_argument('-test_summary_file', type=str, help='File to record benchmark result.')
@@ -352,6 +373,7 @@ def set_launch_args():
         gpu_count=args.gpuCount,
         learning_rate=args.lr,
         cpu_count=args.cpuCount,
+        cpu_count_for_gpu=args.cpuCountForGpu,
         batch_size=args.batchSize,
         num_epochs=args.numEpochs,
         epoch_size=args.epochSize,
