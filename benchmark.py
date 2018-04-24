@@ -148,7 +148,7 @@ def run(config_file, log_dir=None, test_summary_file=None):
             log_file_name = generate_log_file(config)
             log_file_path = os.path.join(log_dir, log_file_name)
             network_dir = os.path.join(log_dir, config.framework, config.network_type, config.network_name)
-            config_dir_name = '--'.join([str(devId),
+            config_dir_name = '--'.join([str(config.device_id),
                                          str(config.device_count),
                                          str(config.batch_size),
                                          str(config.number_of_epochs),
@@ -170,8 +170,8 @@ def run(config_file, log_dir=None, test_summary_file=None):
                 'network': config.network_name,
                 'lr': config.learning_rate,
                 'log_dir': config_dir,
-                'gpuCount': gpu_count,
-                'devId': devId,
+                'gpuCount': config.device_count,
+                'devId': config.device_id.replace(';', ','),
                 'synthetic': config.synthetic,
                 'test_summary_file': test_summary_file,
                 'cpuCountForGpu': config.cpu_count,
