@@ -122,6 +122,7 @@ class CpuLimiter(object):
     def __enter__(self):
         [cpu.turn_off() for cpu in ALL_CPUS]
         [cpu.turn_on() for cpu in ALL_CPUS[:self._cpu_count]]
+        logger.debug('Current enabled CPU count: %s' % get_cpu_count_via_cpuinfo())
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         for i, cpu in enumerate(ALL_CPUS):
