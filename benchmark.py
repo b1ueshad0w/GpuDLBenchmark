@@ -194,7 +194,7 @@ def set_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-config", "--config_file", help="file path of config file", type=str)
     parser.add_argument("-log_dir", "--log_dir", help="Directory for logs.", type=str, default=None)
-    parser.add_argument("-test_summary_file", "--test_summary_file", help="test_summary_file", type=int, default=None)
+    parser.add_argument("-test_summary_file", "--test_summary_file", help="test_summary_file", type=str, default=None)
     args = parser.parse_args()
     run(args.config_file, log_dir=args.log_dir, test_summary_file=args.test_summary_file)
 
